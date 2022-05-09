@@ -1,60 +1,78 @@
-//Descrizione:
-// Partendo dal markup della versione svolta in js plain, rifare lo slider ma questa volta usando Vue.
-// Bonus:
-// 1- al click su una thumb, visualizzare in grande l'immagine corrispondente
-// 2- applicare l'autoplay allo slider: ogni 3 secondi, cambia immagine automaticamente
-// 3- quando il mouse va in hover sullo slider, bloccare l'autoplay e farlo riprendere quando esce
-
-
-
 const app = new Vue({
-    el: "#root",
+    el: '#root',
     data: {
-        statesArray: [{
-                Image: 'img/01.jpg',
+        activeImage: 0,
+        timer: null,
+        images: [{
+                image: 'img/01.jpg',
                 title: 'Svezia',
                 text: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Et temporibus voluptatum suscipit tempore aliquid deleniti aut veniam inventore eligendi ex ad ullam, cumque provident totam omnis, magnam dolores dolorum corporis.'
             },
             {
-                Image: 'img/02.jpg',
+                image: 'img/02.jpg',
                 title: 'Svizzera',
-                text: 'Lorem ipsum,'
+                text: 'Lorem ipsum.'
             },
             {
-                Image: 'img/03.jpg',
+                image: 'img/03.jpg',
                 title: 'Gran Bretagna',
-                text: 'Lorem ipsumLorem ipsum, dolor sit amet consectetur adipisicing elit'
+                text: 'Lorem ipsum, dolor sit amet consectetur.'
             },
             {
-                Image: 'img/04.jpg',
+                image: 'img/04.jpg',
                 title: 'Germania',
-                text: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Et temporibus voluptatum suscipit tempore aliquid deleniti aut veniam inventore eligendi ex ad ullam,'
+                text: 'Lorem ipsum, dolor sit amet '
             },
             {
-                Image: 'img/01.jpg',
+                image: 'img/05.jpg',
                 title: 'Paradise',
-                text: 'Et temporibus voluptatum suscipit tempore aliquid deleniti aut veniam inventore eligendi ex ad ullam,'
-            },
+                text: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Et temporibus voluptatum suscipit.'
+            }
         ],
-        positionImage: 0,
     },
     methods: {
-        clickPreImage: function() {
-            if (this.positionImage === 0) {
-                this.positionImage = this.statesArray.length - 1;
+        showPrev: function() {
+            // Se actie image è uguale a 0, allora ripartartiamo dall'ultimo indice
+            // altrimenti decrementa
+            if (this.activeImage === 0) {
+                this.activeImage = this.images.length - 1;
             } else {
-                this.positionImage--;
+                this.activeImage--;
             }
-
+            this.resetTimer();
         },
-
-        clickNextImage: function() {
-            if (this.positionImage == this.statesArray.length - 1) {
-                this.positionImage = 0;
+        showNextAlClick: function() {
+            this.showNext();
+            this.resetTimer();
+        },
+        showNext: function() {
+            // Se active image è uguale al'ultimo indice, allora lo portiamo a 0
+            // altrimenti incrementa
+            if (this.activeImage >= (this.images.length - 1)) {
+                this.activeImage = 0;
             } else {
-                this.positionImage++;
+                this.activeImage++;
             }
+        },
+        showImage: function(index) {
+            console.log('show me', index);
+            this.activeImage = index;
+            this.resetTimer();
+        },
+        stopTimer: function() {
+            clearInterval(this.timer);
+            this.timer = null;
+        },
+        startTimer: function() {
+            this.timer = setInterval(this.showNext, 3000);
+            console.log(this.timer);
+        },
+        resetTimer() {
+            this.stopTimer();
+            this.startTimer();
         }
-
+    },
+    created() {
+        this.startTimer();
     }
-})
+});
